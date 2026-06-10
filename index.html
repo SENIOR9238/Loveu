@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday | 2026 Special Edition</title>
+
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #ff3e88;
+            --accent-gradient: linear-gradient(135deg, #ff3e88 0%, #7000ff 100%);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; 
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Custom Fluid Cursor --- */
+        #cursor {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+
+        #cursor-blur {
+            width: 250px;
+            height: 250px;
+            background: var(--accent);
+            filter: blur(80px);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.15;
+        }
+
+        /* --- Intro Overlay --- */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .enter-btn {
+            padding: 20px 40px;
+            background: none;
+            border: 1px solid var(--glass-border);
+            color: white;
+            font-size: 0.9rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            transition: 0.4s;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+
+        .enter-btn:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 40px rgba(255,255,255,0.2);
+        }
+
+        /* --- Layout Sections --- */
+        section {
+            min-height: 100vh;
+            padding: 10vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- Typography --- */
+        .hero-title {
+            font-size: clamp(3.5rem, 10vw, 9rem);
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .hero-sub {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Bento Grid (The Story) --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 250px;
+            gap: 20px;
+        }
+
+        .bento-item {
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.2rem;
+            border-radius: 24px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+
+        .large { grid-column: span 2; font-size: 2rem; font-family: 'Playfair Display'; }
+        .tall { grid-row: span 2; }
+
+        /* --- Final Message --- */
+        .final-message {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        /* --- Volume Control --- */
+        .volume-control {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .volume-control:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+        }
+
+        .volume-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            color: var(--accent);
+        }
+
+        .volume-icon:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 8px var(--accent));
+        }
+
+        .volume-slider {
+            width: 120px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(to right, var(--accent) 0%, var(--accent) 100%);
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 62, 136, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 20px rgba(255, 62, 136, 0.8);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(255, 62, 136, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .volume-slider::-moz-range-thumb:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 20px rgba(255, 62, 136, 0.8);
+        }
+
+        .volume-text {
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            min-width: 30px;
+            text-align: right;
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
+            .large, .tall { grid-column: span 1; grid-row: span 1; }
+            section { padding: 40px 20px; }
+            .hero-title { font-size: 3.5rem; }
+            .glass-card { padding: 30px; }
+            
+            .volume-control {
+                top: 20px;
+                right: 20px;
+                gap: 10px;
+                padding: 10px 15px;
+            }
+            
+            .volume-slider {
+                width: 80px;
+            }
+            
+            .volume-text {
+                min-width: 25px;
+                font-size: 0.7rem;
+            }
+        }   
+</style>
+</head>
+<body>
+<audio id="Song" autoplay loop>
+<source src="Song.mp3">
+</audio>
+
+<!-- Volume Control -->
+<div class="volume-control">
+    <span class="volume-icon" id="volume-icon" title="Mute/Unmute">🔊</span>
+    <input type="range" id="volume-slider" class="volume-slider" min="10" max="100" value="50">
+    <span class="volume-text" id="volume-text">50%</span>
+</div>
+
+<div id="cursor"></div>
+    <div id="cursor-blur"></div>
+
+    <!-- Intro Reveal Screen -->
+    <div id="intro-overlay">
+        <div style="text-align: center;">
+            <p style="margin-bottom: 24px; letter-spacing: 8px; font-size: 0.7rem; opacity: 0.5;">13 JUNE 2026 💕🎂</p>
+            <button class="enter-btn" onclick="startExperience()">Open your message 🤍</button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="hero-sub">Today is all about you</div>
+        <h1 class="hero-title">Happiest <br><span class="gradient-text">Birthday jaan </span>.</h1>
+        <p style="max-width: 500px; color: var(--text-dim);">A digital space crafted to celebrate the most incredible person I know. Scroll down to begin.</p>
+    </section>
+<!-- Bento Content Section -->
+<section id="story">
+    <div class="bento-grid">
+        <div class="bento-item large">You make the world feel a little more poetic.</div>
+        <div class="bento-item tall" style="background: var(--accent-gradient); color: white; border: none; font-weight: bold;">
+           Happy Birthday my love Every day spent with you is the best story I have ever read, and I can’t wait to see where our new story will lead us. Thank you so much for staying with me through every phase of my life. Thinking about everything we have been through together, I feel so lucky that I get to spend my life with you. You are my haven, and I treasure the wonderful future we are creating with each other. Come rain or shine, you will forever be my favorite part of the day.
+        </div>
+        <div class="bento-item">Before you, I didn't truly know what my heart was looking for. Thank you for being my safe place and my greatest adventure all at once.</div>
+        <div class="bento-item">You make the ordinary moments feel extraordinary. I cherish everything about you and the beautiful life we are building together."</div>
+        <div class="bento-item large">Every moment with you is a favorite memory that i wanna adore forever.</div>
+        
+        <!-- NEW IMAGE ITEM ADDED HERE -->
+        <div class="bento-item" style="padding: 0; overflow: hidden; border: none;">
+            <img src="https://media1.tenor.com/m/f1xMo-cU7BQAAAAC/peach-goma-kiss-new.gif" alt="Aesthetic" style="width: 100%; height: 100%; object-fit: cover; opacity: 1;">
+        </div>
+    </div>
+</section>
+    </section>
+
+    <!-- Emotional Note -->
+    <section id="note">
+        <div class="glass-card final-message">
+            <h2 style="font-family: 'Playfair Display'; font-size: 2.5rem; margin-bottom: 30px;">A Note For YOU</h2>
+            <p style="font-size: 1.2rem; color: var(--text-dim); line-height: 1.8; max-width: 700px; margin: 0 auto;">
+                2026 is going to be your year. I wish you to always be happy and stay blessed forever and ever my love i'll always pray for you to be happy . Thank you for being my support, my laugh, and my favorite person. I love you my jaanu, You deserve all the happiness in this world my baby i will always love you my sweetie mwah :)
+            </p>
+        </div>
+    </section>
+
+    <!-- Celebration Finale -->
+    <section id="celebration">
+        <div class="final-message" id="finale-trigger">
+            <h3 class="hero-sub">The Grand Finale</h3>
+            <h1 class="gradient-text" style="font-size: clamp(3rem, 8vw, 6rem); font-family: 'Playfair Display';">Stay Magical ✨</h1>
+            <p style="margin-top: 20px; color: var(--text-dim);">Cheers to another year of you being you.</p>
+        </div>
+    </section>
+
+    <footer>
+        DESIGNED FOR YOU • 2026 • LIMITED EDITION
+    </footer>
+
+    <script>
+        // Custom Cursor Movement
+        const cursor = document.getElementById('cursor');
+        const cursorBlur = document.getElementById('cursor-blur');
+
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(cursorBlur, { x: e.clientX - 125, y: e.clientY - 125, duration: 0.8, ease: "power2.out" });
+        });
+
+        // Initialize App
+        function startExperience() {
+            gsap.to("#intro-overlay", { 
+                opacity: 0, 
+                duration: 1.2, 
+                ease: "power4.inOut",
+                onComplete: () => {
+                    document.getElementById('intro-overlay').style.display = 'none';
+                    initAnimations();
+                } 
+            });
+        }
+
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Hero Entrance
+            const tl = gsap.timeline();
+            tl.from(".hero-sub", { opacity: 0, y: 20, duration: 0.8 })
+              .from(".hero-title", { opacity: 0, y: 40, duration: 1, ease: "power4.out" }, "-=0.4")
+              .from("#hero p", { opacity: 0, duration: 0.8 }, "-=0.6");
+
+            // Bento Items Reveal
+            gsap.utils.toArray('.bento-item').forEach((item, i) => {
+                gsap.from(item, {
+                    scrollTrigger: {
+                        trigger: item,
+                        start: "top 90%",
+                    },
+                    opacity: 0,
+                    scale: 0.9,
+                    y: 30,
+                    duration: 0.8,
+                    delay: i * 0.1
+                });
+            });
+
+            // Note Reveal
+            gsap.from(".glass-card", {
+                scrollTrigger: {
+                    trigger: ".glass-card",
+                    start: "top 80%",
+                },
+                opacity: 0,
+                y: 50,
+                duration: 1.2
+            });
+
+            // GRAND FINALE: Confetti Trigger
+            ScrollTrigger.create({
+                trigger: "#finale-trigger",
+                start: "top 70%",
+                onEnter: () => {
+                    launchConfetti();
+                }
+            });
+        }
+
+        function launchConfetti() {
+            var end = Date.now() + (3 * 1000);
+            var colors = ['#ff3e88', '#7000ff', '#ffffff'];
+
+            (function frame() {
+              confetti({
+                particleCount: 3,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: colors
+              });
+              confetti({
+                particleCount: 3,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: colors
+              });
+
+              if (Date.now() < end) {
+                requestAnimationFrame(frame);
+              }
+            }());
+        }
+
+        // Mouse Parallax for Cards
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            gsap.to(".glass-card", { rotationY: x, rotationX: -y, duration: 1 });
+        });
+
+        // Volume Control
+        const audio = document.getElementById('Song');
+        const volumeSlider = document.getElementById('volume-slider');
+        const volumeIcon = document.getElementById('volume-icon');
+        const volumeText = document.getElementById('volume-text');
+        let isMuted = false;
+        let previousVolume = 50;
+
+        // Set initial volume
+        audio.volume = volumeSlider.value / 100;
+
+        // Volume slider change
+        volumeSlider.addEventListener('input', (e) => {
+            const volume = Math.max(10, e.target.value); // Enforce minimum 10%
+            audio.volume = volume / 100;
+            volumeText.textContent = volume + '%';
+            previousVolume = volume;
+            isMuted = false;
+            updateVolumeIcon(volume);
+        });
+
+        // Mute/Unmute toggle
+        volumeIcon.addEventListener('click', () => {
+            if (isMuted) {
+                audio.volume = previousVolume / 100;
+                volumeSlider.value = previousVolume;
+                volumeText.textContent = previousVolume + '%';
+                isMuted = false;
+            } else {
+                audio.volume = 0;
+                volumeSlider.value = 10;
+                volumeText.textContent = '0%';
+                isMuted = true;
+            }
+            updateVolumeIcon(isMuted ? 0 : previousVolume);
+        });
+
+        function updateVolumeIcon(volume) {
+            if (volume == 0 || isMuted) {
+                volumeIcon.textContent = '🔇';
+            } else if (volume < 30) {
+                volumeIcon.textContent = '🔈';
+            } else if (volume < 70) {
+                volumeIcon.textContent = '🔉';
+            } else {
+                volumeIcon.textContent = '🔊';
+            }
+        }
+
+        // Initialize volume icon
+        updateVolumeIcon(volumeSlider.value);
+    </script>
+
+</body>
+</html>
