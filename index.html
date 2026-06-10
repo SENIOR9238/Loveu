@@ -291,7 +291,7 @@
 </style>
 </head>
 <body>
-<audio id="Song" autoplay loop>
+<audio id="Song" loop>
 <source src="Song.mp3">
 </audio>
 
@@ -372,6 +372,11 @@
 
         // Initialize App
         function startExperience() {
+            // Play audio on user gesture (required by browsers)
+            const audio = document.getElementById('Song');
+            audio.volume = document.getElementById('volume-slider').value / 100;
+            audio.play().catch(() => {});
+
             gsap.to("#intro-overlay", { 
                 opacity: 0, 
                 duration: 1.2, 
