@@ -248,9 +248,10 @@
 </head>
 <body>
 
-<audio id="Song" autoplay loop>
-    <source src="Song.mp3">
+<audio id="Song" loop>
+<source src="Song.mp3">
 </audio>
+
 
 
 
@@ -305,7 +306,7 @@
     <div class="intro-words" id="intro-words"></div>
     <div style="text-align:center;position:relative;z-index:2;">
         <p class="intro-tagline"> &nbsp;💕&nbsp; A SURPRISE JUST FOR YOU</p>
-        <button class="enter-btn" onclick="openQuiz()"><span>Open your message 🤍</span></button>
+        <button class="enter-btn" onclick="startAudio(); openQuiz()"><span>Open your message 🤍</span></button>
         <p style="margin-top:20px;font-size:0.65rem;letter-spacing:3px;color:rgba(255,255,255,0.2);">ANSWER THE QUESTIONS TO UNLOCK</p>
     </div>
 </div>
@@ -353,6 +354,14 @@
 <footer>DESIGNED WITH LOVE FOR YOU • 2026 • LIMITED EDITION 💕</footer>
 
 <script>
+// ── Audio unlock (mobile safe) ──
+function startAudio() {
+    const audio = document.getElementById('Song');
+    audio.volume = 0.5;
+    const p = audio.play();
+    if (p !== undefined) p.catch(() => {});
+}
+
 // ================================================================
 //  ✏️  QUIZ DATA — add / edit questions here
 // ================================================================
